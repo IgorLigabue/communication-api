@@ -1,0 +1,19 @@
+FROM maven:3.8.3-openjdk-17 AS build
+WORKDIR /app
+
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -P docker -DskipTests
+
+FROM openjdk:17-jdk-alpine
+VOLUME /tmp
+
+ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
+    JAVA_OPTS=""
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8005
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app.jar"]

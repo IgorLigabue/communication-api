@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: rabbitmq
+    ports:
+      - "15682:15672"
+      - "5682:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+
+  postgres:
+    image: "postgres:15"
+    container_name: postgres
+    ports:
+      - "5442:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=communication_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: communication-api
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/communication_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=admin
+      - SPRING_RABBITMQ_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - LOGGING_LEVEL=INFO
+      - SERVER_SERVLET_CONTEXT_PATH=/api
+      - SPRING_RABBITMQ_QUEUE=communicationSchedulerQueue
+      - SPRING_RABBITMQ_EXCHANGE=communicationExchange
+      - SPRING_RABBITMQ_ROUTINGKEY=communicationRoutingKey
+      - SERVER_PORT=8090
+    depends_on:
+      - rabbitmq
+      - postgres
+    volumes:
+      - ./logs:/app/logs
+    restart: always
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  postgres_data:
+    driver: local

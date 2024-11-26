@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: communication-api
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    show-sql: ${SPRING_JPA_SHOW_SQL}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+rabbitmq:
+  queue: ${SPRING_RABBITMQ_QUEUE}
+  exchange: ${SPRING_RABBITMQ_EXCHANGE}
+  routingkey: ${SPRING_RABBITMQ_ROUTINGKEY}
+
+server:
+  port: ${SERVER_PORT}
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL}
+    br:
+      com:
+        ligabue: ${LOGGING_LEVEL}
