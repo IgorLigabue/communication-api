@@ -16,10 +16,10 @@ public class RabbitMQProducerServiceImpl implements RabbitMQProducerService {
     private final RabbitTemplate rabbitTemplate;
 
     @Value("${rabbitmq.exchange}")
-    private String exchange;
+    String exchange;
 
     @Value("${rabbitmq.routingkey}")
-    private String routingKey;
+    String routingKey;
 
 
     @Override
