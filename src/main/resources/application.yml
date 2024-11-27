@@ -7,3 +7,13 @@ info:
     name: @project.name@
     description: @project.description@
     version: @project.version@
+
+management:
+  health:
+    diskSpace:
+      enabled: false
+    ping:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
