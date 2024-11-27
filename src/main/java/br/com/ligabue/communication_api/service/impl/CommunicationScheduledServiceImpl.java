@@ -4,7 +4,7 @@ import br.com.ligabue.communication_api.dto.CommunicationScheduledDto;
 import br.com.ligabue.communication_api.entity.CommunicationScheduled;
 import br.com.ligabue.communication_api.enumeration.CommunicationScheduledStatus;
 import br.com.ligabue.communication_api.exceptionhandling.exceptions.MissingParametersException;
-import br.com.ligabue.communication_api.mapper.impl.CommunicationScheduledMapperImpl;
+import br.com.ligabue.communication_api.mapper.Mapper;
 import br.com.ligabue.communication_api.repository.CommunicationScheduledRepository;
 import br.com.ligabue.communication_api.service.CommunicationScheduledService;
 import br.com.ligabue.communication_api.service.RabbitMQProducerService;
@@ -17,21 +17,13 @@ import org.springframework.stereotype.Service;
 public class CommunicationScheduledServiceImpl implements CommunicationScheduledService {
 
     CommunicationScheduledRepository communicationScheduledRepository;
-    CommunicationScheduledMapperImpl communicationScheduledMapper;
+    Mapper<CommunicationScheduledDto, CommunicationScheduled> communicationScheduledMapper;
     RabbitMQProducerService rabbitMQProducerService;
 
     @Override
     public CommunicationScheduledDto schedule(CommunicationScheduledDto communicationScheduledDto) {
 
-        if (communicationScheduledDto.getDestination() == null) {
-            throw new MissingParametersException("O campo 'destination' é obrigatório.");
-        }
-        if (communicationScheduledDto.getScheduledDatetime() == null) {
-            throw new MissingParametersException("O campo 'scheduledDatetime' é obrigatório.");
-        }
-        if (communicationScheduledDto.getMessage() == null) {
-            throw new MissingParametersException("O campo 'message' é obrigatório.");
-        }
+        scheduleValidateRequest(communicationScheduledDto);
 
         communicationScheduledDto.setStatus(CommunicationScheduledStatus.PENDING.name());
         CommunicationScheduled communicationScheduled = communicationScheduledMapper.mapToEntity(communicationScheduledDto);
@@ -53,6 +45,18 @@ public class CommunicationScheduledServiceImpl implements CommunicationScheduled
         int updatedRows = communicationScheduledRepository.updateStatusById(id, CommunicationScheduledStatus.CANCELLED);
         if (updatedRows == 0) {
             throw new EntityNotFoundException("Comunicação agendada com ID " + id + " não encontrada.");
+        }
+    }
+
+    private void scheduleValidateRequest(CommunicationScheduledDto communicationScheduledDto) {
+        if (communicationScheduledDto.getDestination() == null) {
+            throw new MissingParametersException("O campo 'destination' é obrigatório.");
+        }
+        if (communicationScheduledDto.getScheduledDatetime() == null) {
+            throw new MissingParametersException("O campo 'scheduledDatetime' é obrigatório.");
+        }
+        if (communicationScheduledDto.getMessage() == null) {
+            throw new MissingParametersException("O campo 'message' é obrigatório.");
         }
     }
 }
