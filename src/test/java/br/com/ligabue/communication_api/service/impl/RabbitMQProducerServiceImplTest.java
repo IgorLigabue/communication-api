@@ -2,6 +2,7 @@ package br.com.ligabue.communication_api.service.impl;
 
 import br.com.ligabue.communication_api.entity.CommunicationScheduled;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ public class RabbitMQProducerServiceImplTest {
     }
 
     @Test
+    @DisplayName("Send message to RabbitMQ")
     public void testSendMessage() {
         CommunicationScheduled communicationScheduled = new CommunicationScheduled();
         communicationScheduled.setMessage("Test message");
